@@ -24,7 +24,7 @@ defmodule RNATranscription do
 
   
   # need to convert the charlist code point (?G is the codepoint of G)
-  def swap(my_char) do
+  defp swap(my_char) do
    cond do 
       my_char == ?G -> ?C
       my_char == ?C -> ?G
