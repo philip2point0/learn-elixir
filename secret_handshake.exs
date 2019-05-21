@@ -14,11 +14,17 @@ defmodule SecretHandshake do
   10000 = Reverse the order of the operations in the secret handshake
   """
   use Bitwise
-  _actionslist =[]
+  
   @spec commands(code :: integer) :: list(String.t())
   def commands(code) do
       #IO.puts "in commands"
-      build_list([], code)
+      
+      codes = findactions(code) 
+      
+      
+      list =[]
+      list = Enum.map(codes, fn (c) -> build_list(c,list) end) |> List.flatten
+      list
       #assignaction(code)
       #if ((code &&& 0b10000) == 0b10000) do
       #  Enum.reverse_order(list)
@@ -35,92 +41,72 @@ defmodule SecretHandshake do
       
   end 
 
-  def checkblink() do
+
+  def findactions(code) do
+     
+     actionslist = assignaction(code) 
+     Enum.map(actionslist, fn (a) -> a &&& code end)
   end
  
-  defp assignaction(code) when code == 0 do
-  []
-  end
-  defp assignaction(code) when code >= 0b100000 do
-  []
-  end
+  
   defp assignaction(code) do
-    list = []
-     case (code) do
-       0b1 -> List.insert_at(list,0,"wink")
-
-       0b10 -> List.insert_at(list,0,"double blink")
-
-       0b100 -> List.insert_at(list,0,"close your eyes")
-
-       0b1000 -> List.insert_at(list,0,"jump")
-
-       0b10000 -> Enum.reverse(list)
-
-       0 -> list
-
-       code -> checkwink(list, code)
+    cond  do 
+      ((0b10000 &&& code) ==0b10000 ) -> [0b1000, 0b100, 0b10, 0b1]
+      true -> [0b1, 0b10, 0b100, 0b1000]
+  
       end
+      
   end
 
-  defp newcode(code) do
-    IO.puts "In newcode"
-    IO.puts code 
-     case (code) do
-       0b1 -> code - 0b1
-
-       0b10 -> code - 0b10
-
-       0b100 -> code - 0b100
-
-       0b1000 -> code - 0b1000
-
-       0b10000 -> code - 0b10000
-
-
-
-       0 -> 0
-
-       
-      end
-  end
   
 
-  defp build_list(list, code) when code < 1 do
+  
+  
+
+  defp build_list(code, list) when code < 1 do
    []
    end
 
-   defp build_list(list, code) when code >= 0b100000 do
+   defp build_list(code, list) when code >= 0b100000 do
   []
   end
    
-  defp build_list(list, 0b1 ) do
-    IO.puts "in the build_list"
+  defp build_list(0b1, list ) do
+    #IO.puts "in the build_list"
     list ++ ["wink"]
    end
     
-  defp build_list(list, 0b10) do
-    IO.puts "in the build_list double blink"
+  defp build_list(0b10, list) do
+    #IO.puts "in the build_list double blink"
        list ++ ["double blink"]
        end
 
-  defp build_list(list, 0b100) do 
+  defp build_list(0b100, list ) do 
        list ++ ["close your eyes"]
        end
 
-defp build_list(list, 0b1000) do
+  defp build_list(0b1000, list) do
        list ++ ["jump"]
        end
 
-  defp build_list(list, code) do
-    case 0b1 &&&code do
-      (0b1) -> build_list( build_list(list, 0b1 &&& code) , code-0b1)
-      true -> build_list(list, code-0b1)
+  defp build_list(0b10000, list) do
+      IO.puts "in reverse function"
+      IO.puts list
+       Enum.reverse(list)
+       end
 
-      end
+       def myreverse(list) do
+       Enum.reverse(list)
+       end
+  #defp build_list(code, list ) do
+   # case 0b1 &&&code do
+     # (0b1) -> build_list( build_list(list, 0b1 &&& code) , code-0b1)
+     # true -> build_list(list, code-0b1)
+
+     # end
     
     #code = newcode(code)
     #list ++ build_list(list, newcode(code))
-    end
+   # end
 
 end
